@@ -61,8 +61,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-#install -D ftpfs/ftpfs.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/ftpfs.o
-#install -D ftpmount/ftpmount $RPM_BUILD_ROOT%{_sbindir}/ftpmount
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -93,6 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/auto.ftpfs
 
 %{_libdir}/lib*.so.*.*.*
+%{_libdir}/lib*.la
 
 # These are SUID root...
 
