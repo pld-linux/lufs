@@ -1,0 +1,21 @@
+--- lufs-0.9.3/kernel/Linux/2.4/Makefile.am~	Sat Jan 25 22:35:37 2003
++++ lufs-0.9.3/kernel/Linux/2.4/Makefile.am	Wed Feb 19 21:29:52 2003
+@@ -13,7 +13,4 @@
+ lufs_o_SOURCES=proc.c inode.c dir.c file.c symlink.c
+ lufs_o_LDADD=
+ 
+-install-data-hook:
+-	depmod -aq
+-	if [ "`lsmod | grep lufs`" ]; then rmmod lufs; fi
+-	modprobe lufs
++
+--- lufs-0.9.3/filesystems/Makefile.am~	Sat Jan 25 22:36:02 2003
++++ lufs-0.9.3/filesystems/Makefile.am	Wed Feb 19 21:38:36 2003
+@@ -3,6 +3,4 @@
+ SUBDIRS=@opt_fs@
+ DIST_SUBDIRS=localfs locasefs ftpfs sshfs cardfs cefs gvfs gnetfs
+ 
+-install-exec-hook:
+-	@echo "filesystems post install configuration..."
+-	ldconfig
++
