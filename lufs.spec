@@ -13,7 +13,7 @@ Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.7
-%define		_rel	2
+%define		_rel	3
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/System
@@ -93,8 +93,8 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %{__automake}
 %configure \
 	--disable-kernel-support \
-	--enable-shared
-#	--enable-wavfs
+	--enable-shared \
+	--enable-wavfs
 #	--enable-cefs
 #	--enable-cardfs
 
@@ -187,6 +187,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-locasefs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-sshfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-wavfs.so.*.*.*
 %{_mandir}/man1/lufsmount*
 %{_mandir}/man1/lufsumount*
 
@@ -202,6 +203,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/liblufs-locasefs.so
 %{_libdir}/liblufs-sshfs.la
 %attr(755,root,root) %{_libdir}/liblufs-sshfs.so
+%{_libdir}/liblufs-wavfs.la
+%attr(755,root,root) %{_libdir}/liblufs-wavfs.so
 %{_includedir}/lufs
 %endif
 
