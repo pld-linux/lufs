@@ -1,0 +1,2 @@
+obj-m		:= lufs.o
+lufs-objs	:= proc.o inode.o dir.o file.o symlink.o
