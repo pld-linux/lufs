@@ -1,5 +1,3 @@
-# TODO: build UP+SMP
-#	longer descriptions
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
@@ -7,6 +5,8 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
+#
+# TODO:		- longer descriptions
 #
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
@@ -63,14 +63,20 @@ Linux Userland File System - kernel module.
 %description -n kernel-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra.
 
-#package -n kernel-smp-...
-#Summary:	Linux SMP driver for ...
-#Summary(pl):	Sterownik dla Linuksa SMP do ...
-#Release:	%{_rel}@%{_kernel_ver_str}
-#Group:		Base/Kernel
-#{?with_dist_kernel:%requires_releq_kernel_smp}
-#Requires(post,postun):	/sbin/depmod
-#{?with_dist_kernel:Requires(postun):	kernel-smp}
+%package -n kernel-smp-fs-lufs
+Summary:	Linux Userland File System - kernel SMP module
+Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+%{?with_dist_kernel:%requires_releq_kernel_smp}
+Requires(post,postun):	/sbin/depmod
+%{?with_dist_kernel:Requires(postun):	kernel-smp}
+
+%description -n kernel-smp-fs-lufs
+Linux Userland File System - kernel SMP module.
+
+%description -n kernel-smp-fs-lufs -l pl
+System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 
 %prep
 %setup -q
@@ -84,7 +90,6 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra.
 %{__automake}
 %configure \
 	--disable-kernel-support \
-	--enable-static \
 	--enable-shared
 #	--enable-wavfs
 #	--enable-cefs
@@ -107,7 +112,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
     ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
     ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
     touch include/config/MARKER
-    
+
     install %{SOURCE1} Makefile
 
     %{__make} -C %{_kernelsrcdir} clean \
@@ -118,19 +123,41 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	CC="%{__cc}" CPP="%{__cpp}" \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
-    
+
     mv lufs{,-$cfg}.ko
 done
-cd -
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%if %{with userspace}
+%{__make} -C filesystems\
+	install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C include \
+	install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C lufsd \
+	install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C man \
+	install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C util \
+	install DESTDIR=$RPM_BUILD_ROOT
+%endif
+
+%if %{with kernel}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/fs/lufs
+cd kernel/Linux/2.6
+install lufs-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/fs/lufs/lufs.ko
+%if %{with smp} && %{with dist_kernel}
+install lufs-smp.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/fs/lufs/lufs.ko
+%endif
+cd -
+%endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+%rm -rf $RPM_BUILD_ROOT
 
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
@@ -138,30 +165,62 @@ rm -rf $RPM_BUILD_ROOT
 %post	-n kernel-fs-lufs
 %depmod %{_kernel_ver}
 
-%postun -n kernel-fs-lufs
+%postun	-n kernel-fs-lufs
 %depmod %{_kernel_ver}
 
+%post	-n kernel-smp-fs-lufs
+%depmod %{_kernel_ver}smp
+
+%postun	-n kernel-smp-fs-lufs
+%depmod %{_kernel_ver}smp
+
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc docs/{*.html,*.txt} TODO ChangeLog AUTHORS Contributors README THANKS
+%doc docs/{*.html,*.txt} AUTHORS README THANKS TODO ChangeLog Contributors
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lufsd.conf
 %attr(755,root,root) %{_bindir}/auto.sshfs
 %attr(755,root,root) %{_bindir}/auto.ftpfs
 %attr(755,root,root) %{_bindir}/lufsd
-%attr(755,root,root) %{_bindir}/lussh
 %attr(755,root,root) %{_bindir}/lufsmount
+%attr(755,root,root) %{_bindir}/lussh
 # These are SUID root...
 %attr(4755,root,root) %{_bindir}/lufsmnt
 %attr(4755,root,root) %{_bindir}/lufsumount
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
-%config(noreplace) %verify(not size mtime md5) /etc/lufsd.conf
-%{_mandir}/man1/*
+#
+%attr(755,root,root) %{_libdir}/liblufs-ftpfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-gnetfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-localfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-locasefs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-sshfs.so.*.*.*
+%{_mandir}/man1/lufsmount*
+%{_mandir}/man1/lufsumount*
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
-%{_includedir}/*
+%{_libdir}/liblufs-ftpfs.la
+%attr(755,root,root) %{_libdir}/liblufs-ftpfs.so
+%{_libdir}/liblufs-gnetfs.la
+%attr(755,root,root) %{_libdir}/liblufs-gnetfs.so
+%{_libdir}/liblufs-localfs.la
+%attr(755,root,root) %{_libdir}/liblufs-localfs.so
+%{_libdir}/liblufs-locasefs.la
+%attr(755,root,root) %{_libdir}/liblufs-locasefs.so
+%{_libdir}/liblufs-sshfs.la
+%attr(755,root,root) %{_libdir}/liblufs-sshfs.so
+%{_includedir}/lufs
+%endif
 
+%if %{with kernel}
 %files -n kernel-fs-lufs
 %defattr(644,root,root,755)
-/lib/modules/*/*/*/*
+%dir /lib/modules/%{_kernel_ver}/kernel/fs/lufs
+/lib/modules/%{_kernel_ver}/kernel/fs/lufs/lufs.ko*
+
+%if %{with smp} && %{with dist_kernel}
+%files -n kernel-smp-fs-lufs
+%defattr(644,root,root,755)
+%dir /lib/modules/%{_kernel_ver}smp/kernel/fs/lufs
+/lib/modules/%{_kernel_ver}smp/kernel/fs/lufs/lufs.ko*
+%endif
+%endif
