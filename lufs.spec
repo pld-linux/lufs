@@ -89,6 +89,8 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %{__aclocal}
 %{__autoconf}
 %{__automake}
+export CFLAGS="%{rpmcflags} -fPIC"
+export CXXFLAGS="%{rpmcflags} -fPIC"
 %configure \
 	--disable-kernel-support \
 	--enable-shared
