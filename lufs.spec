@@ -52,7 +52,9 @@ lokalnych. Ten pakiet zawiera modu³ j±dra do ftpfs.
 %{__automake}
 
 %configure \
-	--with-kheaders=/usr/src/linux/include
+	--with-kheaders=/usr/src/linux/include \
+	--with-debug \
+	--with-kdebug
 
 %{__make}
 
@@ -90,8 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/auto.sshfs
 /usr/bin/auto.ftpfs
 
-%{_libdir}/lib*.so.*.*.*
-%{_libdir}/lib*.la
+%{_libdir}/lib*.so*
 
 # These are SUID root...
 
