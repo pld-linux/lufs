@@ -22,6 +22,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
 BuildRequires:	libtool
+BuildRequires:	rpmbuild(macros) >= 1.118
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -85,10 +86,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-p /sbin/ldconfig
 
 %post	-n kernel%{smpstr}-fs-lufs
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %postun -n kernel%{smpstr}-fs-lufs
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %files
 %defattr(644,root,root,755)
