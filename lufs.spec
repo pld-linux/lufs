@@ -7,15 +7,16 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 # TODO:		- longer descriptions
+#		- optional support for: wavfs, cefs, cardfs
 #
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.7
-%define		_rel	1
+%define		_rel	2
 Release:	%{_rel}
-License:	GPL
-Group:		Base/Kernel
+License:	GPL v2
+Group:		Applications/System
 Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 # Source0-md5:	23f58fe232254a65df6eb4736a81d524
 Source1:	%{name}-Makefile
@@ -132,16 +133,8 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-%{__make} -C filesystems\
-	install DESTDIR=$RPM_BUILD_ROOT
-%{__make} -C include \
-	install DESTDIR=$RPM_BUILD_ROOT
-%{__make} -C lufsd \
-	install DESTDIR=$RPM_BUILD_ROOT
-%{__make} -C man \
-	install DESTDIR=$RPM_BUILD_ROOT
-%{__make} -C util \
-	install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
@@ -153,11 +146,10 @@ install lufs-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
 install lufs-smp.ko \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/fs/lufs/lufs.ko
 %endif
-cd -
 %endif
 
 %clean
-%rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
