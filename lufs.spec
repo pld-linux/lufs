@@ -1,12 +1,11 @@
-#
-# Conditional build:
-# _without_dist_kernel	- without kernel from distribution
-#
 # TODO: build UP+SMP
 #	longer descriptions
-%define		smpstr		%{?_with_smp:-smp}
-%define		smp		%{?_with_smp:1}%{!?_with_smp:0}
-
+#
+# Conditional build:
+%bcond_without	dist_kernel	# without kernel from distribution
+#
+%define		smpstr		%{?with_smp:-smp}
+%define		smp		%{?with_smp:1}%{!?with_smp:0}
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
@@ -20,7 +19,7 @@ Patch0:		%{name}-fix_install.patch
 URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
+%{?with_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
 BuildRequires:	libtool
 BuildRequires:	rpmbuild(macros) >= 1.118
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
