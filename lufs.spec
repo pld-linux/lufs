@@ -92,7 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/auto.sshfs
 /usr/bin/auto.ftpfs
 
-%{_libdir}/lib*.so*
+%{_libdir}/lib*.so.*.*.*
 
 # These are SUID root...
 
