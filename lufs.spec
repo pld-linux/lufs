@@ -1,3 +1,7 @@
+#
+# Conditional build:
+# _without_dist_kernel	- without kernel from distribution
+#
 # TODO: build UP+SMP
 #	longer descriptions
 %define		smpstr		%{?_with_smp:-smp}
@@ -78,11 +82,11 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post -n kernel%{smpstr}-fs-lufs
-/sbin/depmod -a
+%post	-n kernel%{smpstr}-fs-lufs
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
 %postun -n kernel%{smpstr}-fs-lufs
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
 %files
 %defattr(644,root,root,755)
