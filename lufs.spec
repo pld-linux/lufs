@@ -2,26 +2,32 @@
 #	longer descriptions
 #
 # Conditional build:
-%bcond_without	dist_kernel	# without kernel from distribution
+%bcond_without	dist_kernel	# allow non-distribution kernel
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
+%bcond_without	userspace	# don't build userspace module
+%bcond_with	verbose		# verbose build (V=1)
 #
-%define		smpstr		%{?with_smp:-smp}
-%define		smp		%{?with_smp:1}%{!?with_smp:0}
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.7
-Release:	1
+%define		_rel	1
+Release:	%{_rel}
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 # Source0-md5:	23f58fe232254a65df6eb4736a81d524
+Source1:	%{name}-Makefile
 Patch0:		%{name}-fix_install.patch
 URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{?with_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
 BuildRequires:	libtool
-BuildRequires:	rpmbuild(macros) >= 1.118
+%if %{with kernel}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+BuildRequires:	rpmbuild(macros) >= 1.153
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -41,37 +47,82 @@ Linux Userland File System - development files.
 %description devel -l pl
 System plików w przestrzeni u¿ytkownika - pliki dla deweloperów.
 
-%package -n kernel%{smpstr}-fs-lufs
+%package -n kernel-fs-lufs
 Summary:	Linux Userland File System - kernel module
 Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra
-Release:	%{release}@%{_kernel_ver_str}
+Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
-Provides:	lufs = %{version}
-Obsoletes:	lufs
+%{?with_dist_kernel:Requires(postun):	kernel}
+Provides:	kernel-fs(lufs) = %{version}
 
-%description -n kernel%{smpstr}-fs-lufs
+%description -n kernel-fs-lufs
 Linux Userland File System - kernel module.
 
-%description -n kernel%{smpstr}-fs-lufs -l pl
+%description -n kernel-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra.
+
+#package -n kernel-smp-...
+#Summary:	Linux SMP driver for ...
+#Summary(pl):	Sterownik dla Linuksa SMP do ...
+#Release:	%{_rel}@%{_kernel_ver_str}
+#Group:		Base/Kernel
+#{?with_dist_kernel:%requires_releq_kernel_smp}
+#Requires(post,postun):	/sbin/depmod
+#{?with_dist_kernel:Requires(postun):	kernel-smp}
 
 %prep
 %setup -q
 %patch0 -p1
 
 %build
+%if %{with userspace}
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
 %{__automake}
-
 %configure \
-	--with-kheaders=%{_kernelsrcdir}/include \
-	--with-debug \
-	--with-kdebug
+	--disable-kernel-support \
+	--enable-static \
+	--enable-shared
+#	--enable-wavfs
+#	--enable-cefs
+#	--enable-cardfs
 
-%{__make}
+%{__make} -C filesystems
+%{__make} -C lufsd
+%{__make} -C util
+%endif
+
+%if %{with kernel}
+cd kernel/Linux/2.6
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+    touch include/config/MARKER
+    
+    install %{SOURCE1} Makefile
+
+    %{__make} -C %{_kernelsrcdir} clean \
+	RCS_FIND_IGNORE="-name '*.ko' -o" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+    %{__make} -C %{_kernelsrcdir} modules \
+	CC="%{__cc}" CPP="%{__cpp}" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+    
+    mv lufs{,-$cfg}.ko
+done
+cd -
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -84,10 +135,10 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post	-n kernel%{smpstr}-fs-lufs
+%post	-n kernel-fs-lufs
 %depmod %{_kernel_ver}
 
-%postun -n kernel%{smpstr}-fs-lufs
+%postun -n kernel-fs-lufs
 %depmod %{_kernel_ver}
 
 %files
@@ -111,6 +162,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.la
 %{_includedir}/*
 
-%files -n kernel%{smpstr}-fs-lufs
+%files -n kernel-fs-lufs
 %defattr(644,root,root,755)
 /lib/modules/*/*/*/*
