@@ -24,6 +24,17 @@ Linux Userland File System - utilities.
 %description -l pl
 System plików w przestrzeni u¿ytkownika - narzêdzia.
 
+%package devel
+Summary:	Linux Userland File System - development files
+Summary(pl):	System plików w przestrzeni u¿ytkownika - pliki dla deweloperów
+Group:		Development/Libraries
+
+%description devel
+Linux Userland File System - development files.
+
+%description devel -l pl
+System plików w przestrzeni u¿ytkownika - pliki dla deweloperów.
+
 %package -n kernel%{smpstr}-fs-lufs
 Summary:	Linux Userland File System - kernel module
 Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra
@@ -38,17 +49,6 @@ Linux Userland File System - kernel module.
 
 %description -n kernel%{smpstr}-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra.
-
-%package devel
-Summary:	Linux Userland File System - development files
-Summary(pl):	System plików w przestrzeni u¿ytkownika - pliki dla deweloperów
-Group:		Development/Libraries
-
-%description devel
-Linux Userland File System - development files.
-
-%description devel -l pl
-System plików w przestrzeni u¿ytkownika - pliki dla deweloperów.
 
 %prep
 %setup -q
@@ -75,15 +75,14 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
+
 %post -n kernel%{smpstr}-fs-lufs
 /sbin/depmod -a
 
 %postun -n kernel%{smpstr}-fs-lufs
 /sbin/depmod -a
-
-%files -n kernel%{smpstr}-fs-lufs
-%defattr(644,root,root,755)
-/lib/modules/*/*/*/*
 
 %files
 %defattr(644,root,root,755)
@@ -96,11 +95,16 @@ rm -rf $RPM_BUILD_ROOT
 # These are SUID root...
 %attr(4755,root,root) %{_bindir}/lufsmnt
 %attr(4755,root,root) %{_bindir}/lufsumount
-%attr(755,root,root) %{_libdir}/lib*.so*
+%attr(755,root,root) %{_libdir}/lib*.so.*.*
 %config(noreplace) %verify(not size mtime md5) /etc/lufsd.conf
 %{_mandir}/man1/*
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/*
+%attr(755,root,root) %{_libdir}/lib*.so
 %{_libdir}/lib*.la
+%{_includedir}/*
+
+%files -n kernel%{smpstr}-fs-lufs
+%defattr(644,root,root,755)
+/lib/modules/*/*/*/*
