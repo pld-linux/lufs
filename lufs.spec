@@ -21,6 +21,7 @@ Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 # Source0-md5:	23f58fe232254a65df6eb4736a81d524
 Source1:	%{name}-Makefile
 Patch0:		%{name}-fix_install.patch
+Patch1:		%{name}-am.patch
 URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -82,6 +83,7 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %if %{with userspace}
