@@ -1,0 +1,16 @@
+--- lufs-0.9.7/filesystems/gnetfs/Makefile.am.orig	2003-01-25 23:37:06.000000000 +0100
++++ lufs-0.9.7/filesystems/gnetfs/Makefile.am	2004-08-09 21:02:10.724590896 +0200
+@@ -1,12 +1,8 @@
+ INCLUDES=-I../ @all_includes@
+ 
+-noinst_LIBRARIES=libgnet.a
+ lib_LTLIBRARIES=liblufs-gnetfs.la
+ 
+ noinst_HEADERS=xfer.h search.h vtree.h gnetfs.h list.h gnet.h gnet_lib.h gnet_engine.h gnet_channel.h gnet_proto.h gnet_msg.h gnet_defaults.h gnet_search.h gnet_host.h gnet_xfer.h
+ 
+-libgnet_a_SOURCES=gnet_engine.c gnet_channel.c gnet_proto.c gnet_msg.c gnet_search.c gnet_host.c gnet_xfer.c
+-
+-liblufs_gnetfs_la_SOURCES=xfer.c search.c vtree.c gnetfs.c
++liblufs_gnetfs_la_SOURCES=xfer.c search.c vtree.c gnetfs.c gnet_engine.c gnet_channel.c gnet_proto.c gnet_msg.c gnet_search.c gnet_host.c gnet_xfer.c
+ liblufs_gnetfs_la_LDFLAGS=-version-info 1:0:0
+-liblufs_gnetfs_la_LIBADD=libgnet.a
