@@ -1,8 +1,10 @@
+# TODO: build UP+SMP
+#	longer descriptions
 %define		smpstr		%{?_with_smp:-smp}
 %define		smp		%{?_with_smp:1}%{!?_with_smp:0}
 
-Summary:	Linux Userland File System
-Summary(pl):	System plików w przestrzeni u¿ytkownika
+Summary:	Linux Userland File System - utilities
+Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.3
 Release:	1
@@ -10,49 +12,45 @@ License:	GPL
 Group:		Base/Kernel
 Source0:	http://ftp1.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 Patch0:		%{name}-fix_install.patch
-%{!?no_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
+BuildRequires:	autoconf
+BuildRequires:	automake
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
+BuildRequires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Blahblahblah
+Linux Userland File System - utilities.
 
 %description -l pl
-Blablabla
+System plików w przestrzeni u¿ytkownika - narzêdzia.
 
 %package -n kernel%{smpstr}-fs-lufs
-Summary:	FTP File System - kernel module
-Summary(pl):	System plików FTP - modu³ j±dra
+Summary:	Linux Userland File System - kernel module
+Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra
 Release:	%{release}@%{_kernel_ver_str}
 Group:		Base/Kernel
-Prereq:		/sbin/depmod
-Obsoletes:	lufs
+Requires(post,postun):	/sbin/depmod
 Provides:	lufs = %{version}
+Obsoletes:	lufs
 
 %description -n kernel%{smpstr}-fs-lufs
-FTP File System is a Linux kernel module, enhancing the VFS with FTP
-volume mounting capabilities. That is, you can "mount" FTP shared
-directories in your very personal file system and take advantage of
-local files ops. This package contains ftpfs kernel module.
+Linux Userland File System - kernel module.
 
 %description -n kernel%{smpstr}-fs-lufs -l pl
-System plików FTP jest modu³em j±dra rozszerzaj±cym VFS o mo¿liwo¶æ
-montowania wolumenów FTP. Oznacza to, ¿e mo¿esz podmontowaæ katalogi
-FTP do swojego systemu plików i korzystaæ z nich jak z plików
-lokalnych. Ten pakiet zawiera modu³ j±dra do ftpfs.
+System plików w przestrzeni u¿ytkownika - modu³ j±dra.
 
 %prep
 %setup -q
 %patch0 -p1
 
 %build
-
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
 %{__automake}
 
 %configure \
-	--with-kheaders=/usr/src/linux/include \
+	--with-kheaders=%{_kernelsrcdir}/include \
 	--with-debug \
 	--with-kdebug
 
@@ -62,7 +60,6 @@ lokalnych. Ten pakiet zawiera modu³ j±dra do ftpfs.
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -80,22 +77,14 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc docs/{*.html,*.txt} TODO ChangeLog AUTHORS Contributors README THANKS
-%{_mandir}/man1/*
-/etc/lufsd.conf
-
-%defattr(755,root,root)
-
-/usr/bin/lufsd
-/usr/bin/lussh
-/usr/bin/lufsmount
-
-/usr/bin/auto.sshfs
-/usr/bin/auto.ftpfs
-
-%{_libdir}/lib*.so*
-
+%attr(755,root,root) %{_bindir}/auto.sshfs
+%attr(755,root,root) %{_bindir}/auto.ftpfs
+%attr(755,root,root) %{_bindir}/lufsd
+%attr(755,root,root) %{_bindir}/lussh
+%attr(755,root,root) %{_bindir}/lufsmount
 # These are SUID root...
-
-%defattr(4755,root,root)
-/usr/bin/lufsmnt
-/usr/bin/lufsumount
+%attr(4755,root,root) %{_bindir}/lufsmnt
+%attr(4755,root,root) %{_bindir}/lufsumount
+%attr(755,root,root) %{_libdir}/lib*.so*
+%config(noreplace) %verify(not size mtime md5) /etc/lufsd.conf
+%{_mandir}/man1/*
