@@ -6,7 +6,7 @@
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
-Version:	0.9.3
+Version:	0.9.5
 Release:	1
 License:	GPL
 Group:		Base/Kernel
@@ -38,6 +38,17 @@ Linux Userland File System - kernel module.
 
 %description -n kernel%{smpstr}-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra.
+
+%package devel
+Summary:	Linux Userland File System - development files
+Summary(pl):	System plików w przestrzeni u¿ytkownika - pliki dla deweloperów
+Group:		Development/Libraries
+
+%description devel
+Linux Userland File System - development files.
+
+%description devel -l pl
+System plików w przestrzeni u¿ytkownika - pliki dla deweloperów.
 
 %prep
 %setup -q
@@ -88,3 +99,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/lib*.so*
 %config(noreplace) %verify(not size mtime md5) /etc/lufsd.conf
 %{_mandir}/man1/*
+
+%files devel
+%defattr(644,root,root,755)
+%{_includedir}/*
+%{_libdir}/lib*.la
