@@ -14,9 +14,10 @@ Version:	0.9.5
 Release:	1
 License:	GPL
 Group:		Base/Kernel
-Source0:	http://ftp1.sourceforge.net/lufs/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 # Source0-md5:	71dc7c5709952b50914ab9790d652230
 Patch0:		%{name}-fix_install.patch
+URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.4}
