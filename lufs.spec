@@ -10,12 +10,12 @@
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
-Version:	0.9.5
+Version:	0.9.7
 Release:	1
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
-# Source0-md5:	71dc7c5709952b50914ab9790d652230
+# Source0-md5:	23f58fe232254a65df6eb4736a81d524
 Patch0:		%{name}-fix_install.patch
 URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
