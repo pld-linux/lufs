@@ -173,7 +173,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc docs/{*.html,*.txt} AUTHORS README THANKS TODO ChangeLog Contributors
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lufsd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/lufsd.conf
 %attr(755,root,root) %{_bindir}/auto.sshfs
 %attr(755,root,root) %{_bindir}/auto.ftpfs
 %attr(755,root,root) %{_bindir}/lufsd
