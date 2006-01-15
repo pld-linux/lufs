@@ -13,7 +13,7 @@ Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.7
-%define		_rel	4
+%define		_rel	5
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/System
