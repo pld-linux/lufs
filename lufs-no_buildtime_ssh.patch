@@ -1,0 +1,17 @@
+--- lufs-0.9.7.new/configure.in	2006-01-15 17:31:13.000000000 +0100
++++ lufs-0.9.7/configure.in	2003-10-29 23:40:28.000000000 +0100
+@@ -150,9 +150,14 @@
+ 	[  --with-ssh=PATH         specify the path to the ssh executable], 
+ 	[SSHPROG=$withval],
+ 	[SSHPROG=`which ssh 2>/dev/null`])
++if test ! -x "$SSHPROG"
++then
++    AC_MSG_RESULT([not found (sshfs support disabled)])
++else
+     AC_MSG_RESULT([found ($SSHPROG)])
+     AC_DEFINE([HAS_SSH], 1 , [Define if ssh is found.])
+     opt_fs="$opt_fs sshfs"
++fi
+ AC_SUBST(SSHPROG)
+ 
+ 

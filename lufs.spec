@@ -22,6 +22,7 @@ Source0:	http://dl.sourceforge.net/lufs/%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 Patch0:		%{name}-fix_install.patch
 Patch1:		%{name}-am.patch
+Patch2:		%{name}-no_buildtime_ssh.patch
 URL:		http://lufs.sourceforge.net/lufs/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -84,6 +85,7 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %if %{with userspace}
@@ -92,6 +94,7 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %{__autoconf}
 %{__automake}
 %configure \
+	--with-ssh="%{_bindir}/ssh" \
 	--disable-kernel-support \
 	--enable-shared \
 	--enable-wavfs
