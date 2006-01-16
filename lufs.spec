@@ -5,6 +5,7 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
+%bcond_without	gvfs		# no gnome vfs support
 #
 # TODO:		- longer descriptions
 #		- optional support for: wavfs, cefs, cardfs
@@ -24,9 +25,16 @@ Patch0:		%{name}-fix_install.patch
 Patch1:		%{name}-am.patch
 Patch2:		%{name}-no_buildtime_ssh.patch
 URL:		http://lufs.sourceforge.net/lufs/
+%if %{with userspace}
 BuildRequires:	autoconf
 BuildRequires:	automake
+%if %{with gvfs}
+BuildRequires:	gnome-libs-devel
+BuildRequires:	gnome-vfs-devel
+%endif
 BuildRequires:	libtool
+BuildRequires:	libstdc++-devel
+%endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
@@ -89,6 +97,10 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 
 %build
 %if %{with userspace}
+CPPFLAGS="$CPPFLAGS -I/usr/include/libart-2.0"; export CPPFLAGS
+%if %{without gvfs}
+sed '/opt_fs=/s/gvfs//' -i configure.in
+%endif
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
@@ -195,6 +207,9 @@ rm -rf $RPM_BUILD_ROOT
 #
 %attr(755,root,root) %{_libdir}/liblufs-ftpfs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-gnetfs.so.*.*.*
+%if %{with gvfs}
+%attr(755,root,root) %{_libdir}/liblufs-gvfs.so.*.*.*
+%endif
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-locasefs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-sshfs.so.*.*.*
@@ -208,6 +223,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/liblufs-ftpfs.so
 %{_libdir}/liblufs-gnetfs.la
 %attr(755,root,root) %{_libdir}/liblufs-gnetfs.so
+%if %{with gvfs}
+%{_libdir}/liblufs-gvfs.la
+%endif
 %{_libdir}/liblufs-localfs.la
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so
 %{_libdir}/liblufs-locasefs.la
