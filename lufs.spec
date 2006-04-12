@@ -10,11 +10,11 @@
 # TODO:		- longer descriptions
 #		- optional support for: wavfs, cefs, cardfs
 #
+%define		_rel	5
 Summary:	Linux Userland File System - utilities
 Summary(pl):	System plików w przestrzeni u¿ytkownika - narzêdzia
 Name:		lufs
 Version:	0.9.7
-%define		_rel	5
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/System
@@ -32,11 +32,11 @@ BuildRequires:	automake
 BuildRequires:	gnome-libs-devel
 BuildRequires:	gnome-vfs-devel
 %endif
-BuildRequires:	libtool
 BuildRequires:	libstdc++-devel
+BuildRequires:	libtool
 %endif
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -121,13 +121,13 @@ sed '/opt_fs=/s/gvfs//' -i configure.in
 %if %{with kernel}
 cd kernel/Linux/2.6
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-	exit 1
-    fi
-    rm -rf include
-    install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-$cfg .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 %ifarch ppc ppc64
 	install -d include/asm
 	[ ! -d %{_kernelsrcdir}/include/asm-powerpc ] || ln -sf %{_kernelsrcdir}/include/asm-powerpc/* include/asm
@@ -136,21 +136,21 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 %endif
 
-    ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-    touch include/config/MARKER
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
+	touch include/config/MARKER
 
-    install %{SOURCE1} Makefile
+	install %{SOURCE1} Makefile
 
-    %{__make} -C %{_kernelsrcdir} clean \
-	RCS_FIND_IGNORE="-name '*.ko' -o" \
-	M=$PWD O=$PWD \
-	%{?with_verbose:V=1}
-    %{__make} -C %{_kernelsrcdir} modules \
-	CC="%{__cc}" CPP="%{__cpp}" \
-	M=$PWD O=$PWD \
-	%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
 
-    mv lufs{,-$cfg}.ko
+	mv lufs{,-$cfg}.ko
 done
 %endif
 
