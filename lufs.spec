@@ -24,6 +24,7 @@ Source1:	%{name}-Makefile
 Patch0:		%{name}-fix_install.patch
 Patch1:		%{name}-am.patch
 Patch2:		%{name}-no_buildtime_ssh.patch
+Patch3:		%{name}-CFLAGS.patch
 URL:		http://lufs.sourceforge.net/lufs/
 %if %{with userspace}
 BuildRequires:	autoconf
@@ -94,6 +95,7 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %if %{with userspace}
@@ -113,9 +115,7 @@ sed '/opt_fs=/s/gvfs//' -i configure.in
 #	--enable-cefs
 #	--enable-cardfs
 
-%{__make} -C filesystems
-%{__make} -C lufsd
-%{__make} -C util
+%{__make}
 %endif
 
 %if %{with kernel}
