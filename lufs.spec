@@ -204,36 +204,36 @@ rm -rf $RPM_BUILD_ROOT
 # These are SUID root...
 %attr(4755,root,root) %{_bindir}/lufsmnt
 %attr(4755,root,root) %{_bindir}/lufsumount
-#
+# lufs dlopens non-versioned libs, *.so symlinks are required
 %attr(755,root,root) %{_libdir}/liblufs-ftpfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-ftpfs.so
 %attr(755,root,root) %{_libdir}/liblufs-gnetfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-gnetfs.so
 %if %{with gvfs}
 %attr(755,root,root) %{_libdir}/liblufs-gvfs.so.*.*.*
 %endif
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-localfs.so
 %attr(755,root,root) %{_libdir}/liblufs-locasefs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-locasefs.so
 %attr(755,root,root) %{_libdir}/liblufs-sshfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-sshfs.so
 %attr(755,root,root) %{_libdir}/liblufs-wavfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-wavfs.so
 %{_mandir}/man1/lufsmount*
 %{_mandir}/man1/lufsumount*
 
 %files devel
 %defattr(644,root,root,755)
 %{_libdir}/liblufs-ftpfs.la
-%attr(755,root,root) %{_libdir}/liblufs-ftpfs.so
 %{_libdir}/liblufs-gnetfs.la
-%attr(755,root,root) %{_libdir}/liblufs-gnetfs.so
 %if %{with gvfs}
 %{_libdir}/liblufs-gvfs.la
 %endif
 %{_libdir}/liblufs-localfs.la
-%attr(755,root,root) %{_libdir}/liblufs-localfs.so
 %{_libdir}/liblufs-locasefs.la
-%attr(755,root,root) %{_libdir}/liblufs-locasefs.so
 %{_libdir}/liblufs-sshfs.la
-%attr(755,root,root) %{_libdir}/liblufs-sshfs.so
 %{_libdir}/liblufs-wavfs.la
-%attr(755,root,root) %{_libdir}/liblufs-wavfs.so
 %{_includedir}/lufs
 %endif
 
