@@ -211,6 +211,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/liblufs-gnetfs.so
 %if %{with gvfs}
 %attr(755,root,root) %{_libdir}/liblufs-gvfs.so.*.*.*
+%attr(755,root,root) %{_libdir}/liblufs-gvfs.so
 %endif
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so.*.*.*
 %attr(755,root,root) %{_libdir}/liblufs-localfs.so
