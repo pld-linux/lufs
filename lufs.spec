@@ -37,8 +37,8 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 %endif
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
-BuildRequires:	rpmbuild(macros) >= 1.153
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
+BuildRequires:	rpmbuild(macros) >= 1.326
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -59,7 +59,7 @@ Linux Userland File System - development files.
 %description devel -l pl
 System plików w przestrzeni u¿ytkownika - pliki dla deweloperów.
 
-%package -n kernel-fs-lufs
+%package -n kernel%{_alt_kernel}-fs-lufs
 Summary:	Linux Userland File System - kernel module
 Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -67,27 +67,27 @@ Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 %{?with_dist_kernel:Requires(postun):	kernel}
-Provides:	kernel-fs(lufs) = %{version}
+Provides:	kernel%{_alt_kernel}-fs(lufs) = %{version}
 
-%description -n kernel-fs-lufs
+%description -n kernel%{_alt_kernel}-fs-lufs
 Linux Userland File System - kernel module.
 
-%description -n kernel-fs-lufs -l pl
+%description -n kernel%{_alt_kernel}-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra.
 
-%package -n kernel-smp-fs-lufs
+%package -n kernel%{_alt_kernel}-smp-fs-lufs
 Summary:	Linux Userland File System - kernel SMP module
 Summary(pl):	System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
-%{?with_dist_kernel:Requires(postun):	kernel-smp}
+%{?with_dist_kernel:Requires(postun):	kernel%{_alt_kernel}-smp}
 
-%description -n kernel-smp-fs-lufs
+%description -n kernel%{_alt_kernel}-smp-fs-lufs
 Linux Userland File System - kernel SMP module.
 
-%description -n kernel-smp-fs-lufs -l pl
+%description -n kernel%{_alt_kernel}-smp-fs-lufs -l pl
 System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 
 %prep
@@ -120,38 +120,8 @@ sed '/opt_fs=/s/gvfs//' -i configure.in
 
 %if %{with kernel}
 cd kernel/Linux/2.6
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	rm -rf include
-	install -d include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg .config
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-%ifarch ppc ppc64
-	install -d include/asm
-	[ ! -d %{_kernelsrcdir}/include/asm-powerpc ] || ln -sf %{_kernelsrcdir}/include/asm-powerpc/* include/asm
-	[ ! -d %{_kernelsrcdir}/include/asm-%{_target_base_arch} ] || ln -snf %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
-%else
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-%endif
-
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-	touch include/config/MARKER
-
-	install %{SOURCE1} Makefile
-
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-		CC="%{__cc}" CPP="%{__cpp}" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-
-	mv lufs{,-$cfg}.ko
-done
+install %{SOURCE1} Makefile
+%build_kernel_modules -m lufs
 %endif
 
 %install
@@ -163,14 +133,8 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/fs/lufs
 cd kernel/Linux/2.6
-install lufs-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/fs/lufs/lufs.ko
-%if %{with smp} && %{with dist_kernel}
-install lufs-smp.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/fs/lufs/lufs.ko
-%endif
+%install_kernel_modules -m lufs -d kernel/fs/lufs
 %endif
 
 %clean
@@ -179,16 +143,16 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post	-n kernel-fs-lufs
+%post	-n kernel%{_alt_kernel}-fs-lufs
 %depmod %{_kernel_ver}
 
-%postun	-n kernel-fs-lufs
+%postun	-n kernel%{_alt_kernel}-fs-lufs
 %depmod %{_kernel_ver}
 
-%post	-n kernel-smp-fs-lufs
+%post	-n kernel%{_alt_kernel}-smp-fs-lufs
 %depmod %{_kernel_ver}smp
 
-%postun	-n kernel-smp-fs-lufs
+%postun	-n kernel%{_alt_kernel}-smp-fs-lufs
 %depmod %{_kernel_ver}smp
 
 %if %{with userspace}
@@ -239,13 +203,13 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%files -n kernel-fs-lufs
+%files -n kernel%{_alt_kernel}-fs-lufs
 %defattr(644,root,root,755)
 %dir /lib/modules/%{_kernel_ver}/kernel/fs/lufs
 /lib/modules/%{_kernel_ver}/kernel/fs/lufs/lufs.ko*
 
 %if %{with smp} && %{with dist_kernel}
-%files -n kernel-smp-fs-lufs
+%files -n kernel%{_alt_kernel}-smp-fs-lufs
 %defattr(644,root,root,755)
 %dir /lib/modules/%{_kernel_ver}smp/kernel/fs/lufs
 /lib/modules/%{_kernel_ver}smp/kernel/fs/lufs/lufs.ko*
