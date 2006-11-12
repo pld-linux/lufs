@@ -1,0 +1,1 @@
+- fixed depmod in %post and %postun when build with _without_dist_kernel
