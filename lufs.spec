@@ -38,7 +38,7 @@ BuildRequires:	libtool
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
-BuildRequires:	rpmbuild(macros) >= 1.326
+BuildRequires:	rpmbuild(macros) >= 1.329
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -119,9 +119,8 @@ sed '/opt_fs=/s/gvfs//' -i configure.in
 %endif
 
 %if %{with kernel}
-cd kernel/Linux/2.6
-install %{SOURCE1} Makefile
-%build_kernel_modules -m lufs
+install %{SOURCE1} kernel/Linux/2.6/Makefile
+%build_kernel_modules -m lufs -C kernel/Linux/2.6
 %endif
 
 %install
@@ -133,8 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-cd kernel/Linux/2.6
-%install_kernel_modules -m lufs -d kernel/fs/lufs
+%install_kernel_modules -m kernel/Linux/2.6/lufs -d kernel/fs/lufs
 %endif
 
 %clean
