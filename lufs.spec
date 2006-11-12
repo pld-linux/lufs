@@ -100,7 +100,7 @@ System plików w przestrzeni u¿ytkownika - modu³ j±dra SMP.
 %build
 %if %{with userspace}
 CPPFLAGS="$CPPFLAGS -I/usr/include/libart-2.0"; export CPPFLAGS
-%if %{without gvfs}
+%if !%{with gvfs}
 sed '/opt_fs=/s/gvfs//' -i configure.in
 %endif
 %{__libtoolize}
