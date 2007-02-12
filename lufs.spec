@@ -12,7 +12,7 @@
 #
 %define		_rel	5
 Summary:	Linux Userland File System - utilities
-Summary(pl):	System plikÛw w przestrzeni uøytkownika - narzÍdzia
+Summary(pl.UTF-8):   System plik√≥w w przestrzeni u≈ºytkownika - narzƒôdzia
 Name:		lufs
 Version:	0.9.7
 Release:	%{_rel}
@@ -45,23 +45,23 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Linux Userland File System - utilities.
 
-%description -l pl
-System plikÛw w przestrzeni uøytkownika - narzÍdzia.
+%description -l pl.UTF-8
+System plik√≥w w przestrzeni u≈ºytkownika - narzƒôdzia.
 
 %package devel
 Summary:	Linux Userland File System - development files
-Summary(pl):	System plikÛw w przestrzeni uøytkownika - pliki dla deweloperÛw
+Summary(pl.UTF-8):   System plik√≥w w przestrzeni u≈ºytkownika - pliki dla deweloper√≥w
 Group:		Development/Libraries
 
 %description devel
 Linux Userland File System - development files.
 
-%description devel -l pl
-System plikÛw w przestrzeni uøytkownika - pliki dla deweloperÛw.
+%description devel -l pl.UTF-8
+System plik√≥w w przestrzeni u≈ºytkownika - pliki dla deweloper√≥w.
 
 %package -n kernel%{_alt_kernel}-fs-lufs
 Summary:	Linux Userland File System - kernel module
-Summary(pl):	System plikÛw w przestrzeni uøytkownika - modu≥ j±dra
+Summary(pl.UTF-8):   System plik√≥w w przestrzeni u≈ºytkownika - modu≈Ç jƒÖdra
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -72,12 +72,12 @@ Provides:	kernel%{_alt_kernel}-fs(lufs) = %{version}
 %description -n kernel%{_alt_kernel}-fs-lufs
 Linux Userland File System - kernel module.
 
-%description -n kernel%{_alt_kernel}-fs-lufs -l pl
-System plikÛw w przestrzeni uøytkownika - modu≥ j±dra.
+%description -n kernel%{_alt_kernel}-fs-lufs -l pl.UTF-8
+System plik√≥w w przestrzeni u≈ºytkownika - modu≈Ç jƒÖdra.
 
 %package -n kernel%{_alt_kernel}-smp-fs-lufs
 Summary:	Linux Userland File System - kernel SMP module
-Summary(pl):	System plikÛw w przestrzeni uøytkownika - modu≥ j±dra SMP
+Summary(pl.UTF-8):   System plik√≥w w przestrzeni u≈ºytkownika - modu≈Ç jƒÖdra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
@@ -87,8 +87,8 @@ Requires(post,postun):	/sbin/depmod
 %description -n kernel%{_alt_kernel}-smp-fs-lufs
 Linux Userland File System - kernel SMP module.
 
-%description -n kernel%{_alt_kernel}-smp-fs-lufs -l pl
-System plikÛw w przestrzeni uøytkownika - modu≥ j±dra SMP.
+%description -n kernel%{_alt_kernel}-smp-fs-lufs -l pl.UTF-8
+System plik√≥w w przestrzeni u≈ºytkownika - modu≈Ç jƒÖdra SMP.
 
 %prep
 %setup -q
