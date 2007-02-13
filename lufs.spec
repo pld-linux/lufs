@@ -12,7 +12,7 @@
 #
 %define		_rel	5
 Summary:	Linux Userland File System - utilities
-Summary(pl.UTF-8):   System plików w przestrzeni użytkownika - narzędzia
+Summary(pl.UTF-8):	System plików w przestrzeni użytkownika - narzędzia
 Name:		lufs
 Version:	0.9.7
 Release:	%{_rel}
@@ -50,7 +50,7 @@ System plików w przestrzeni użytkownika - narzędzia.
 
 %package devel
 Summary:	Linux Userland File System - development files
-Summary(pl.UTF-8):   System plików w przestrzeni użytkownika - pliki dla deweloperów
+Summary(pl.UTF-8):	System plików w przestrzeni użytkownika - pliki dla deweloperów
 Group:		Development/Libraries
 
 %description devel
@@ -61,7 +61,7 @@ System plików w przestrzeni użytkownika - pliki dla deweloperów.
 
 %package -n kernel%{_alt_kernel}-fs-lufs
 Summary:	Linux Userland File System - kernel module
-Summary(pl.UTF-8):   System plików w przestrzeni użytkownika - moduł jądra
+Summary(pl.UTF-8):	System plików w przestrzeni użytkownika - moduł jądra
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -77,7 +77,7 @@ System plików w przestrzeni użytkownika - moduł jądra.
 
 %package -n kernel%{_alt_kernel}-smp-fs-lufs
 Summary:	Linux Userland File System - kernel SMP module
-Summary(pl.UTF-8):   System plików w przestrzeni użytkownika - moduł jądra SMP
+Summary(pl.UTF-8):	System plików w przestrzeni użytkownika - moduł jądra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
